@@ -197,8 +197,8 @@ def main():
     
     
     A=retrieve_graph()
-    print(nx.single_source_shortest_path(A,862))
-    #print(plus_court_chemin(A,862,11))
+    #print(nx.single_source_shortest_path(A,862))
+    print(plus_court_chemin(A,862,11))
     #print (max(nx.shortest_path_length(A,862)))
     #print (max_longeur(A,8851))
     
