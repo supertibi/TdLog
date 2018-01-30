@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'PageAccueil.ui'
+# Form implementation generated from reading ui file 'pageaccueil.ui'
 #
 # Created by: PyQt5 UI code generator 5.6
 #
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_PageAccueil(object):
     def setupUi(self, PageAccueil):
         PageAccueil.setObjectName("PageAccueil")
-        PageAccueil.resize(802, 500)
+        PageAccueil.resize(800, 500)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
         brush.setStyle(QtCore.Qt.SolidPattern)

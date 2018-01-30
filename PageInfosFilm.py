@@ -158,7 +158,7 @@ class Ui_PageInfosFilm(object):
         self.Synopsis.setPalette(palette)
         self.Synopsis.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.Synopsis.setObjectName("Synopsis")
-        self.Affiche = QLabel2(PageInfosFilm)
+        self.Affiche = QtWidgets.QLabel(PageInfosFilm)
         self.Affiche.setGeometry(QtCore.QRect(40, 100, 261, 371))
         self.Affiche.setText("")
         self.Affiche.setPixmap(QtGui.QPixmap("Images/classic-poster1-movie.jpg"))
@@ -179,7 +179,7 @@ class Ui_PageInfosFilm(object):
         self.Runtime.setPalette(palette)
         font = QtGui.QFont()
         font.setPointSize(18)
-        font.setItalic(True)
+        font.setItalic(False)
         self.Runtime.setFont(font)
         self.Runtime.setObjectName("Runtime")
         self.Tagline = QtWidgets.QTextBrowser(PageInfosFilm)
@@ -227,7 +227,7 @@ class Ui_PageInfosFilm(object):
         PageInfosFilm.setWindowTitle(_translate("PageInfosFilm", "Form"))
         self.Collection.setText(_translate("PageInfosFilm", "STAR WARS COLLECTION"))
         self.Titre.setText(_translate("PageInfosFilm", "Star Wars"))
-        self.Date.setText(_translate("PageInfosFilm", "1977-05-25"))
+        self.Date.setText(_translate("PageInfosFilm", "Released 1977-05-25"))
         self.Votes.setText(_translate("PageInfosFilm", "8.1/10 - 6778 votes"))
         self.Synopsis.setHtml(_translate("PageInfosFilm", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -241,4 +241,3 @@ class Ui_PageInfosFilm(object):
 "</style></head><body style=\" font-family:\'.SF NS Text\'; font-size:18pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">A long time ago, in a galaxy far, far away...</p></body></html>"))
 
-from QLabel2 import QLabel2
