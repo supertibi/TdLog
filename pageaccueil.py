@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_PageAccueil(object):
     def setupUi(self, PageAccueil):
         PageAccueil.setObjectName("PageAccueil")
-        PageAccueil.resize(800, 500)
+        PageAccueil.resize(802, 500)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -34,7 +34,7 @@ class Ui_PageAccueil(object):
         PageAccueil.setPalette(palette)
         PageAccueil.setMouseTracking(True)
         self.HomeLabel = QtWidgets.QLabel(PageAccueil)
-        self.HomeLabel.setGeometry(QtCore.QRect(0, -20, 771, 91))
+        self.HomeLabel.setGeometry(QtCore.QRect(600, -10, 161, 81))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(234, 144, 221))
         brush.setStyle(QtCore.Qt.SolidPattern)
