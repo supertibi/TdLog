@@ -166,6 +166,21 @@ def construit_graph(M,n):
                         G.add_edge(id1,id2)  
                             
     return(G)
+    
+def plus_court_chemin(G,id1,id2):
+    if nx.has_path(G,id1,id2):
+        return (nx.shortest_path(G,id1,id2))
+    else:
+        print('Les deux films ne sont pas reliés')
+    
+def max_longeur(G,id1):
+    dict=nx.shortest_path_length(G,id1)
+    m=0
+    for elem in dict:
+        if (dict[elem]>m):
+            m=dict[elem]
+    return m
+    
 
 def main():
 
@@ -183,7 +198,9 @@ def main():
     
     A=retrieve_graph()
     print(nx.single_source_shortest_path(A,862))
-    
+    #print(plus_court_chemin(A,862,11))
+    #print (max(nx.shortest_path_length(A,862)))
+    #print (max_longeur(A,8851))
     
 if __name__=='__main__':
     main()
