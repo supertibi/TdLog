@@ -228,7 +228,7 @@ class Ui_PageRechercheFilms(object):
         self.QuestionGenres.setText(_translate("PageRechercheFilms", "Which kind of movie do you want to see ?"))
         self.SearchButton.setText(_translate("PageRechercheFilms", "Search"))
         self.ReturnButton.setText(_translate("PageRechercheFilms", "Return"))
-        self.TitreLabel.setText(_translate("PageRechercheFilms", "FILM RECOMANDATION"))
+        self.TitreLabel.setText(_translate("PageRechercheFilms", "MOVIE RECOMMENDATION"))
 
 from QLabel2 import QLabel2
 from QTableWidget2 import QTableWidget2

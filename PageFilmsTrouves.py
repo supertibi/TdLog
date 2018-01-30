@@ -201,6 +201,6 @@ class Ui_PageFilmsTrouves(object):
         self.DateSortie3.setText(_translate("PageFilmsTrouves", "Date de sortie"))
         self.TitreFilm1.setText(_translate("PageFilmsTrouves", "Titre"))
         self.TitreFilm2.setText(_translate("PageFilmsTrouves", "Titre"))
-        self.TitreLabel.setText(_translate("PageFilmsTrouves", "FILM RECOMANDATION"))
+        self.TitreLabel.setText(_translate("PageFilmsTrouves", "MOVIE RECOMMENDATION"))
 
 from QLabel2 import QLabel2
