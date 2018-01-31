@@ -63,8 +63,9 @@ class Ui_PageAccueil(object):
         self.HomeLabel.setFont(font)
         self.HomeLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop|QtCore.Qt.AlignTrailing)
         self.HomeLabel.setObjectName("HomeLabel")
-        self.KevinBacon = QLabel2(PageAccueil)
+        self.KevinBacon = QLabel3(PageAccueil)
         self.KevinBacon.setGeometry(QtCore.QRect(50, 70, 271, 341))
+        self.KevinBacon.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.KevinBacon.setMouseTracking(True)
         self.KevinBacon.setFrameShape(QtWidgets.QFrame.Box)
         self.KevinBacon.setLineWidth(12)
@@ -73,8 +74,9 @@ class Ui_PageAccueil(object):
         self.KevinBacon.setPixmap(QtGui.QPixmap("Images/kevin-bacon1.jpg"))
         self.KevinBacon.setScaledContents(True)
         self.KevinBacon.setObjectName("KevinBacon")
-        self.AffichesFilms = QLabel2(PageAccueil)
+        self.AffichesFilms = QLabel3(PageAccueil)
         self.AffichesFilms.setGeometry(QtCore.QRect(450, 70, 261, 341))
+        self.AffichesFilms.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.AffichesFilms.setMouseTracking(True)
         self.AffichesFilms.setFrameShape(QtWidgets.QFrame.Box)
         self.AffichesFilms.setLineWidth(15)
@@ -153,4 +155,4 @@ class Ui_PageAccueil(object):
         self.KevinBaconLabel.setText(_translate("PageAccueil", "KEVIN BACON"))
         self.FilmRecoLabel.setText(_translate("PageAccueil", "FILM RECOMANDATION"))
 
-from QLabel2 import QLabel2
+from QLabel3 import QLabel3

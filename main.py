@@ -16,12 +16,17 @@ from PageRechercheFilms import Ui_PageRechercheFilms
 from PageKevinBacon import Ui_PageKevinBacon
 from PageFilmsTrouves import Ui_PageFilmsTrouves
 from PageInfosFilm import Ui_PageInfosFilm
+from PageHelp import Ui_PageHelp
+from PageLiensFilms import Ui_PageLiensFilms
 import bdd
+import graphe
 
+##/////////////////////////////////////////////////////////////////////
+##///////////////////////Une fonction utile///////////////////////
+##/////////////////////////////////////////////////////////////////////
 
 def QuelID(db,nom):
         requete="SELECT id FROM metadata WHERE upper(title) LIKE "+"upper('"+nom+"')"
-        print(requete)
         db.cur.execute(requete)
         liste=db.cur.fetchall()
         if(len(liste)>0):
@@ -30,12 +35,49 @@ def QuelID(db,nom):
         else:
             return None
         return(IDfilm)
-
+        
+##/////////////////////////////////////////////////////////////////////
+##///////////////////////Classe PageAccueil///////////////////////
+##/////////////////////////////////////////////////////////////////////
+        
 class PageAccueil2(QtWidgets.QWidget,Ui_PageAccueil):
     def __init__(self, parent=None):
         super(PageAccueil2,self).__init__(parent)
         self.setupUi(self)
         
+##/////////////////////////////////////////////////////////////////////
+##///////////////////////Classe PageHelp///////////////////////
+##/////////////////////////////////////////////////////////////////////
+        
+class PageHelp2(QtWidgets.QWidget,Ui_PageHelp):
+    def __init__(self, parent=None):
+        super(PageHelp2,self).__init__(parent)
+        self.setupUi(self)
+        
+    def trouveFilms(self):
+        if(len(self.TitreFilm.text())>1):
+            db=bdd.Base_de_films()
+            requete="SELECT title FROM metadata WHERE title LIKE '%"+self.TitreFilm.text()+"%'"
+            db.cur.execute(requete)
+            liste_noms=db.cur.fetchall()
+            self.setTable(liste_noms)
+        
+    def setTable(self,liste_noms):
+        self.TableFilmsCorrespondants.setRowCount(len(liste_noms))
+        for i in range(len(liste_noms)):
+            titre=str(liste_noms[i])[1:-2]
+            titre=titre[1:-1]
+            self.TableFilmsCorrespondants.setItem(i, 0, QtWidgets.QTableWidgetItem(titre))
+     
+    def ecritureCell(self):
+        cell=self.TableFilmsCorrespondants.currentItem()
+        cell=cell.text()
+        print(cell)
+        self.TitreFilm.setText(cell)
+
+##/////////////////////////////////////////////////////////////////////
+##///////////////////////Classe PageRechercheFilms///////////////////////        
+##/////////////////////////////////////////////////////////////////////
         
 class PageRechercheFilms2(QtWidgets.QWidget,Ui_PageRechercheFilms):
     def __init__(self, parent=None):
@@ -43,7 +85,6 @@ class PageRechercheFilms2(QtWidgets.QWidget,Ui_PageRechercheFilms):
         self.setupUi(self)
                 
     def ecritureCell(self):
-        print("dedans")
         cell=self.TableFilmsCorrespondants.currentItem()
         cell=cell.text()
         print(cell)
@@ -54,6 +95,8 @@ class PageRechercheFilms2(QtWidgets.QWidget,Ui_PageRechercheFilms):
         db=bdd.Base_de_films()
         IDfilm=QuelID(db,self.ReponseID.text())
         if(IDfilm != None):
+            self.CadreFilmCourant.setEnabled(True)
+            
             f=bdd.Film(IDfilm)
             self.TitreFilmCourant.setText(f.title)
             image=bdd.fetch_image(f.poster_path,False)
@@ -102,24 +145,22 @@ class PageRechercheFilms2(QtWidgets.QWidget,Ui_PageRechercheFilms):
         
         
         #On parametre les fonctionnalites d'information sur les films        
-        self.uiPFT.AfficheFilm1.clicked.connect(self.infosFilm1)
-        self.uiPFT.AfficheFilm2.clicked.connect(self.infosFilm2)
-        self.uiPFT.AfficheFilm3.clicked.connect(self.infosFilm3)
+        self.uiPFT.Cadre1.clicked.connect(self.infosFilm1)
+        self.uiPFT.Cadre2.clicked.connect(self.infosFilm2)
+        self.uiPFT.Cadre3.clicked.connect(self.infosFilm3)
+        
+        self.uiPFT.Return.clicked.connect(self.PageFilmsTrouves.close)
         
         
         self.PageFilmsTrouves.show()  
 
     def trouveFilms(self):
-        db=bdd.Base_de_films()
-        requete="SELECT title FROM metadata WHERE title LIKE '%"+self.ReponseID.text()+"%'"
-        db.cur.execute(requete)
-        liste_noms=db.cur.fetchall()
-        texte_noms=""
-        for i in range(len(liste_noms)):
-            titre=str(liste_noms[i])[1:-2]
-            texte_noms=texte_noms+titre[1:-1]+"\n"
-#        self.ListeFilmsCorrespondants.setText(texte_noms)
-        self.setTable(liste_noms)
+        if(len(self.ReponseID.text())>1):
+            db=bdd.Base_de_films()
+            requete="SELECT title FROM metadata WHERE upper(title) LIKE upper('%"+self.ReponseID.text()+"%')"
+            db.cur.execute(requete)
+            liste_noms=db.cur.fetchall()
+            self.setTable(liste_noms)
         
     def setTable(self,liste_noms):
         self.TableFilmsCorrespondants.setRowCount(len(liste_noms))
@@ -140,7 +181,182 @@ class PageRechercheFilms2(QtWidgets.QWidget,Ui_PageRechercheFilms):
     
     def infosFilm(self,nom):
         db=bdd.Base_de_films()
-#        nom=self.ReponseID
+        IDfilm=QuelID(db,nom)
+        f=bdd.Film(IDfilm)
+        
+        self.PageInfosFilm = QtWidgets.QWidget()
+        self.uiPIF=PageInfosFilm2()
+        self.uiPIF.setupUi(self.PageInfosFilm)
+        
+        self.uiPIF.Date.setText("Released "+f.release_date)
+        if('NaN'==f.belong_to_collection):
+            self.uiPIF.Collection.setText(f.title)
+        else:
+            self.uiPIF.Collection.setText(f.belong_to_collection['name'][:-11])
+        self.uiPIF.Synopsis.setText(f.overview)
+        self.uiPIF.Tagline.setText(f.tagline)
+        self.uiPIF.Titre.setText(f.title)
+        self.uiPIF.Runtime.setText(str(int(f.runtime))+"min")
+        textVotes="/10 - "
+        textVotes=str(f.vote_average)+textVotes+str(f.vote_count)+" votes"
+        self.uiPIF.Votes.setText(textVotes)
+        f.image=bdd.fetch_image(f.poster_path)
+        qimage = ImageQt(f.image)
+        pixmap = QtGui.QPixmap.fromImage(qimage)
+        self.uiPIF.Affiche.setPixmap(pixmap)
+        
+        note=f.vote_average
+        
+        self.uiPIF.Etoile1.setPixmap(QtGui.QPixmap("Images/EtoileGrise.gif"))
+        self.uiPIF.Etoile2.setPixmap(QtGui.QPixmap("Images/EtoileGrise.gif"))
+        self.uiPIF.Etoile3.setPixmap(QtGui.QPixmap("Images/EtoileGrise.gif"))
+        self.uiPIF.Etoile4.setPixmap(QtGui.QPixmap("Images/EtoileGrise.gif"))
+        self.uiPIF.Etoile5.setPixmap(QtGui.QPixmap("Images/EtoileGrise.gif"))
+        if(note>=1):
+            self.uiPIF.Etoile1.setPixmap(QtGui.QPixmap("Images/FullStar.gif"))
+        if(note>=3):
+            self.uiPIF.Etoile2.setPixmap(QtGui.QPixmap("Images/FullStar.gif"))
+        if(note>=5):
+            self.uiPIF.Etoile3.setPixmap(QtGui.QPixmap("Images/FullStar.gif"))
+        if(note>=7):
+            self.uiPIF.Etoile4.setPixmap(QtGui.QPixmap("Images/FullStar.gif"))
+        if(note>=9):
+            self.uiPIF.Etoile5.setPixmap(QtGui.QPixmap("Images/FullStar.gif"))
+            
+        
+        self.PageInfosFilm.show()
+
+##/////////////////////////////////////////////////////////////////////      
+##///////////////////////Classe PageKevinBacon///////////////////////           
+##/////////////////////////////////////////////////////////////////////
+        
+class PageKevinBacon2(QtWidgets.QWidget,Ui_PageKevinBacon):
+    def __init__(self, parent=None):
+        super(PageKevinBacon2,self).__init__(parent)
+        self.setupUi(self)
+        
+    def afficheFilmCourant1(self):
+        pixmap=self.afficheFilmCourant(self.TitreFilm1.text())
+        if(pixmap is not None):
+            self.AfficheFilm1.setPixmap(pixmap)
+        
+    def afficheFilmCourant2(self):
+        pixmap=self.afficheFilmCourant(self.TitreFilm2.text())
+        if(pixmap is not None):
+            self.AfficheFilm2.setPixmap(pixmap)
+        
+    def afficheFilmCourant(self,nom):
+        db=bdd.Base_de_films()
+        IDfilm=QuelID(db,nom)
+        if(IDfilm != None):
+            f=bdd.Film(IDfilm)
+            imageC=bdd.fetch_image(f.poster_path,False)
+            qimageC = ImageQt(imageC)
+            pixmapC = QtGui.QPixmap.fromImage(qimageC)
+            return pixmapC
+        
+    def ouvertureHelp1(self):
+        self.PageHelp = QtWidgets.QWidget()
+        self.uiPH=PageHelp2()
+        self.uiPH.setupUi(self.PageHelp)
+        
+        self.uiPH.TitreFilm.textChanged.connect(self.uiPH.trouveFilms)
+        self.uiPH.TableFilmsCorrespondants.cellDoubleClicked.connect(self.uiPH.ecritureCell)
+        
+        self.uiPH.OK.clicked.connect(self.retourHelp1)
+        
+        self.PageHelp.show()
+    def ouvertureHelp2(self):
+        self.PageHelp = QtWidgets.QWidget()
+        self.uiPH=PageHelp2()
+        self.uiPH.setupUi(self.PageHelp)
+        
+        self.uiPH.TitreFilm.textChanged.connect(self.uiPH.trouveFilms)
+        self.uiPH.TableFilmsCorrespondants.cellDoubleClicked.connect(self.uiPH.ecritureCell)
+        
+        self.uiPH.OK.clicked.connect(self.retourHelp2)
+        
+        self.PageHelp.show()
+        
+    def retourHelp1(self):
+        self.TitreFilm1.setText(self.uiPH.TitreFilm.text())
+        self.PageHelp.close()
+    def retourHelp2(self):
+        self.TitreFilm2.setText(self.uiPH.TitreFilm.text())
+        self.PageHelp.close()
+        
+        
+    def trouveLiens(self):
+        db=bdd.Base_de_films()
+        A=graphe.retrieve_graph()
+        liste_IDfilms=graphe.plus_court_chemin(A,QuelID(db,self.TitreFilm1.text()),QuelID(db,self.TitreFilm2.text()))
+        self.liste_films=[]
+        for i in range(len(liste_IDfilms)):
+            self.liste_films.append(bdd.Film(liste_IDfilms[i]))
+            
+        self.PageLiensFilms = QtWidgets.QWidget()
+        self.uiPLF=PageLiensFilms2()
+        self.uiPLF.setupUi(self.PageLiensFilms)
+        
+        self.i=0
+        
+        
+        self.uiPLF.PointDroitFleche.clicked.connect(self.avance)
+        self.uiPLF.PointGaucheFleche.clicked.connect(self.recule)
+        self.uiPLF.Cadre1.clicked.connect(self.infosFilm1)
+        self.uiPLF.Cadre2.clicked.connect(self.infosFilm2)
+        
+        self.afficheAffiches()
+        self.PageLiensFilms.show()
+        
+    def afficheAffiches(self):
+        f1=self.liste_films[self.i]
+        f2=self.liste_films[self.i+1]
+        self.uiPLF.Titre1.setText(f1.title)
+        self.uiPLF.Titre2.setText(f2.title)
+        f1.image=bdd.fetch_image(f1.poster_path)
+        qimage1 = ImageQt(f1.image)
+        pixmap1 = QtGui.QPixmap.fromImage(qimage1)
+        self.uiPLF.Affiche1.setPixmap(pixmap1)
+        f2.image=bdd.fetch_image(f2.poster_path)
+        qimage2 = ImageQt(f2.image)
+        pixmap2 = QtGui.QPixmap.fromImage(qimage2)
+        self.uiPLF.Affiche2.setPixmap(pixmap2)
+        
+    def avance(self):
+        self.i+=1
+        if(self.i<1):
+            self.uiPLF.PointGauche.setEnabled(False)
+        else:
+            self.uiPLF.PointGauche.setEnabled(True)
+        if(self.i>=len(self.liste_films)-2):
+            self.uiPLF.PointDroit.setEnabled(False)
+        else:
+            self.uiPLF.PointDroit.setEnabled(True)
+        
+        self.afficheAffiches()
+        
+    def recule(self):
+        self.i-=1
+        if(self.i<1):
+            self.uiPLF.PointGauche.setEnabled(False)
+        else:
+            self.uiPLF.PointGauche.setEnabled(True)
+        if(self.i>=len(self.liste_films)-2):
+            self.uiPLF.PointDroit.setEnabled(False)
+        else:
+            self.uiPLF.PointDroit.setEnabled(True)
+        
+        self.afficheAffiches()
+        
+    def infosFilm1(self):
+        self.infosFilm(self.uiPLF.Titre1.text())    
+    def infosFilm2(self):
+        self.infosFilm(self.uiPLF.Titre2.text())
+    
+    
+    def infosFilm(self,nom):
+        db=bdd.Base_de_films()
         IDfilm=QuelID(db,nom)
         f=bdd.Film(IDfilm)
         
@@ -167,12 +383,20 @@ class PageRechercheFilms2(QtWidgets.QWidget,Ui_PageRechercheFilms):
         
         self.PageInfosFilm.show()
         
-            
         
-class PageKevinBacon2(QtWidgets.QWidget,Ui_PageKevinBacon):
+        
+##/////////////////////////////////////////////////////////////////////
+##///////////////////////Classe PageLiensFilms///////////////////////
+##/////////////////////////////////////////////////////////////////////
+        
+class PageLiensFilms2(QtWidgets.QWidget,Ui_PageLiensFilms):
     def __init__(self, parent=None):
-        super(PageKevinBacon2,self).__init__(parent)
-        self.setupUi(self)   
+        super(PageLiensFilms2,self).__init__(parent)
+        self.setupUi(self)  
+
+##/////////////////////////////////////////////////////////////////////
+##///////////////////////Classe PageFilmsTrouves///////////////////////
+##/////////////////////////////////////////////////////////////////////
         
 class PageFilmsTrouves2(QtWidgets.QWidget,Ui_PageFilmsTrouves):
     def __init__(self, parent=None):
@@ -196,8 +420,9 @@ class PageFilmsTrouves2(QtWidgets.QWidget,Ui_PageFilmsTrouves):
         self.AfficheFilm2.pixmap(f2.image)
         self.AfficheFilm3.pixmap(f3.image)
         
-
-        
+##/////////////////////////////////////////////////////////////////////
+##///////////////////////Classe PageInfoFilms///////////////////////        
+##/////////////////////////////////////////////////////////////////////
         
 class PageInfosFilm2(QtWidgets.QWidget,Ui_PageInfosFilm):
     def __init__(self, parent=None):
@@ -205,6 +430,10 @@ class PageInfosFilm2(QtWidgets.QWidget,Ui_PageInfosFilm):
         self.setupUi(self)
         
 
+##/////////////////////////////////////////////////////////////////////
+##///////////////////////Classe MainWindow///////////////////////        
+##/////////////////////////////////////////////////////////////////////
+        
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -258,11 +487,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.uiPR.ReponseID.textChanged.connect(self.uiPR.afficheFilmCourant)
         self.uiPR.SearchButton.clicked.connect(self.uiPR.ouvertureTrouves) 
         
-        self.uiPR.AfficheFilmCourant.clicked.connect(self.uiPR.infosFilm0)
+        self.uiPR.CadreFilmCourant.clicked.connect(self.uiPR.infosFilm0)
       
         self.uiPR.ReturnButton.clicked.connect(self.switchToHome)
         
         self.uiPR.TableFilmsCorrespondants.cellDoubleClicked.connect(self.uiPR.ecritureCell)
+        
+        ##=============Fonctionnalites de la page de Kevin Bacon=============
+        
+        self.uiPKB.TitreFilm1.textChanged.connect(self.uiPKB.afficheFilmCourant1)
+        self.uiPKB.TitreFilm2.textChanged.connect(self.uiPKB.afficheFilmCourant2)
+        self.uiPKB.Browse1.clicked.connect(self.uiPKB.ouvertureHelp1)
+        self.uiPKB.Browse2.clicked.connect(self.uiPKB.ouvertureHelp2)
+        
+        self.uiPKB.ReturnButton.clicked.connect(self.switchToHome)
+        
+        self.uiPKB.Search.clicked.connect(self.uiPKB.trouveLiens)
         
         
         
@@ -296,7 +536,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def switchToTable(self):
         self.central_widget.addWidget(self.tableWidget)
         self.central_widget.setCurrentWidget(self.tableWidget)        
-    
+ 
+##/////////////////////////////////////////////////////////////////////    
+##///////////////////////Main///////////////////////
+##/////////////////////////////////////////////////////////////////////
     
 if __name__ == '__main__':
     

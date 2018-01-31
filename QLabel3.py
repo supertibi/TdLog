@@ -9,14 +9,11 @@ Created on Sun Jan  7 17:43:55 2018
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSignal
 
-class QLabel2(QtWidgets.QLabel):
+class QLabel3(QtWidgets.QLabel):
     def enterEvent(self, event):
-        if(self.isEnabled()):
-            self.setFrameShape(QtWidgets.QFrame.StyledPanel)
-            self.setLineWidth(3)
-
+        self.setGeometry(self.x()-10,self.y()-10,self.width()+20,self.height()+20)
     def leaveEvent(self, event):
-        self.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.setGeometry(self.x()+10,self.y()+10,self.width()-20,self.height()-20)
         
     clicked=pyqtSignal()
 
